@@ -2371,4 +2371,7 @@
     <!-- Config to disable showing ringtones from removable storage -->
     <bool name="config_excludeRingtonesFromRemovableStorage">false</bool>
 
+    <!-- If this is true, key chords can be used to take a screen record on the device. -->
+    <bool name="config_enableScreenrecordChord">true</bool>
+
 </resources>
