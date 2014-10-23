@@ -7021,6 +7021,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (denyTransientStatus || denyTransientNav) {
             // clear the clearable flags instead
             clearClearableFlagsLw();
+            vis &= ~View.SYSTEM_UI_CLEARABLE_FLAGS;
         }
 
         if (mExpandedDesktop) transientStatusBarAllowed = false;
