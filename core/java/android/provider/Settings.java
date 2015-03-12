@@ -3356,6 +3356,12 @@ public final class Settings {
         public static final String DIALER_OPENCNAM_ACCOUNT_SID = "dialer_opencnam_account_sid";
 
         /**
+         * Restore ROM control preferences
+         * @hide
+         */
+        public static final String ROM_CONTROL_RESTORE = "rom_control_restore";
+
+        /**
          * Whether to show the clock in status bar
          * of the stock battery icon
          * 0: don't show the clock
