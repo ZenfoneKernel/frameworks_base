@@ -19,6 +19,7 @@ package com.android.systemui.statusbar.phone;
 import android.app.ActivityManagerNative;
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -32,9 +33,11 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.telecom.TelecomManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -51,6 +54,7 @@ import com.android.keyguard.EmergencyButton;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.systemui.R;
+import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.KeyguardAffordanceView;
 import com.android.systemui.statusbar.KeyguardIndicationController;
@@ -103,6 +107,12 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
 
     private int mLastUnlockIconRes = 0;
 
+    private VisualizerView mVisualizer;
+    private boolean mScreenOn;
+    private boolean mLinked;
+    private boolean mVisualizerEnabled;
+    private SettingsObserver mSettingsObserver;
+
     public KeyguardBottomAreaView(Context context) {
         this(context, null);
     }
@@ -119,6 +129,8 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         mTrustDrawable = new TrustDrawable(mContext);
+        mSettingsObserver = new SettingsObserver(new Handler());
+        mSettingsObserver.observe();
     }
 
     private AccessibilityDelegate mAccessibilityDelegate = new AccessibilityDelegate() {
@@ -620,6 +632,145 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         @Override
         public int getIntrinsicHeight() {
             return mIntrinsicHeight;
+        }
+    }
+
+    public void requestVisualizer(boolean show, int delay) {
+        if (!mVisualizerEnabled) {
+            return;
+        }
+        removeCallbacks(mStartVisualizer);
+        removeCallbacks(mStopVisualizer);
+        if (DEBUG) Log.d(TAG, "requestVisualizer(show: " + show + ", delay: " + delay + ")");
+        if (show && mScreenOn
+                && mPhoneStatusBar.getBarState() == StatusBarState.KEYGUARD
+                && !mPhoneStatusBar.isKeyguardFadingAway()
+                && !mPhoneStatusBar.isGoingToNotificationShade()
+                && mPhoneStatusBar.getCurrentMediaNotificationKey() != null) {
+            if (DEBUG) Log.d(TAG, "--> starting visualizer");
+            postDelayed(mStartVisualizer, delay);
+        } else {
+            if (DEBUG) Log.d(TAG, "--> stopping visualizer");
+            postDelayed(mStopVisualizer, delay);
+        }
+    }
+
+    private static class LockscreenBarEqRenderer extends Renderer {
+        private int mDivisions;
+        private Paint mPaint;
+        private int mDbFuzz;
+        private int mDbFuzzFactor;
+
+        /**
+         * Renders the FFT data as a series of lines, in histogram form
+         *
+         * @param divisions - must be a power of 2. Controls how many lines to draw
+         * @param paint - Paint to draw lines with
+         * @param dbfuzz - final dB display adjustment
+         * @param dbFactor - dbfuzz is multiplied by dbFactor.
+         */
+        public LockscreenBarEqRenderer(int divisions, Paint paint, int dbfuzz, int dbFactor) {
+            super();
+            if (DEBUG) {
+                Log.d(TAG, "Lockscreen EQ Renderer; divisions:" + divisions + ", dbfuzz: "
+                        + dbfuzz + "dbFactor: " + dbFactor);
+            }
+            mDivisions = divisions;
+            mPaint = paint;
+            mDbFuzz = dbfuzz;
+            mDbFuzzFactor = dbFactor;
+        }
+
+        @Override
+        public void onRender(Canvas canvas, AudioData data, Rect rect) {
+            // Do nothing, we only display FFT data
+        }
+
+        @Override
+        public void onRender(Canvas canvas, FFTData data, Rect rect) {
+            for (int i = 0; i < data.bytes.length / mDivisions; i++) {
+                mFFTPoints[i * 4] = i * 4 * mDivisions;
+                mFFTPoints[i * 4 + 2] = i * 4 * mDivisions;
+                byte rfk = data.bytes[mDivisions * i];
+                byte ifk = data.bytes[mDivisions * i + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
+                int dbValue = magnitude > 0 ? (int) (10 * Math.log10(magnitude)) : 0;
+
+                mFFTPoints[i * 4 + 1] = rect.height();
+                mFFTPoints[i * 4 + 3] = rect.height() - ((dbValue * mDbFuzzFactor) + mDbFuzz);
+            }
+
+            canvas.drawLines(mFFTPoints, mPaint);
+        }
+    }
+
+    private final Runnable mStartVisualizer = new Runnable() {
+        @Override
+        public void run() {
+            if (DEBUG) Log.w(TAG, "mStartVisualizer");
+
+            mVisualizer.animate()
+                    .alpha(1f)
+                    .setDuration(VISUALIZER_ANIMATION_DURATION);
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (mVisualizer != null && !mLinked) {
+                        mVisualizer.link(0);
+                        mLinked = true;
+                    }
+                }
+            });
+        }
+    };
+
+    private final Runnable mStopVisualizer = new Runnable() {
+        @Override
+        public void run() {
+            if (DEBUG) Log.w(TAG, "mStopVisualizer");
+
+            mVisualizer.animate()
+                    .alpha(0f)
+                    .setDuration(VISUALIZER_ANIMATION_DURATION);
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (mVisualizer != null && mLinked) {
+                        mVisualizer.unlink();
+                        mLinked = false;
+                    }
+                }
+            });
+        }
+    };
+
+    private class SettingsObserver extends UserContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void observe() {
+            super.observe();
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.LOCKSCREEN_VISUALIZER_ENABLED),
+                    false, this, UserHandle.USER_ALL);
+            update();
+        }
+
+        @Override
+        protected void unobserve() {
+            super.unobserve();
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void update() {
+            ContentResolver resolver = mContext.getContentResolver();
+            mVisualizerEnabled = Settings.Secure.getIntForUser(resolver,
+                    Settings.Secure.LOCKSCREEN_VISUALIZER_ENABLED, 1, UserHandle.USER_CURRENT) != 0;
+
         }
     }
 }
