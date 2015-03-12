@@ -3699,15 +3699,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter = new IntentFilter();
         filter.addAction(Intent.TOGGLE_GESTURE_ACTIONS);
         mContext.registerReceiver(mGestureToggleReceiver, filter);
-
-        // receive broadcasts for packages
-        IntentFilter packageFilter = new IntentFilter();
-        packageFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        packageFilter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-        packageFilter.addAction(Intent.ACTION_PACKAGE_FULLY_REMOVED);
-        packageFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        packageFilter.addDataScheme("package");
-        mContext.registerReceiver(mPackageBroadcastReceiver, packageFilter);
     }
 
     private void addStatusBarWindow() {
