@@ -18,10 +18,8 @@ package com.android.systemui.qs.tiles;
 
 import android.annotation.NonNull;
 import android.annotation.Nullable;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -32,7 +30,6 @@ import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
 import android.os.AsyncTask;
-import android.os.PowerManager;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -59,39 +56,19 @@ public class VisualizerTile extends QSTile<QSTile.State>
     private boolean mLinked;
     private boolean mIsAnythingPlaying;
     private boolean mListening;
-    private boolean mPowerSaveModeEnabled;
-
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (PowerManager.ACTION_POWER_SAVE_MODE_CHANGING.equals(intent.getAction())) {
-                mPowerSaveModeEnabled = intent.getBooleanExtra(PowerManager.EXTRA_POWER_SAVE_MODE,
-                        false);
-                checkIfPlaying();
-            }
-        }
-    };
 
     public VisualizerTile(Host host) {
         super(host);
         mMediaSessionManager = (MediaSessionManager)
                 mContext.getSystemService(Context.MEDIA_SESSION_SERVICE);
 
-        mContext.registerReceiver(mReceiver,
-                new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGING));
-        PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-        mPowerSaveModeEnabled = pm.isPowerSaveMode();
-
         // initialize state
-        if (!mPowerSaveModeEnabled) {
-            List<MediaController> activeSessions = mMediaSessionManager.getActiveSessions(null);
-            for (MediaController activeSession : activeSessions) {
-                PlaybackState playbackState = activeSession.getPlaybackState();
-                if (playbackState != null && playbackState.getState()
-                        == PlaybackState.STATE_PLAYING) {
-                    mIsAnythingPlaying = true;
-                    break;
-                }
+        List<MediaController> activeSessions = mMediaSessionManager.getActiveSessions(null);
+        for (MediaController activeSession : activeSessions) {
+            PlaybackState playbackState = activeSession.getPlaybackState();
+            if (playbackState != null && playbackState.getState() == PlaybackState.STATE_PLAYING) {
+                mIsAnythingPlaying = true;
+                break;
             }
         }
         if (mIsAnythingPlaying && !mLinked) {
@@ -204,17 +181,15 @@ public class VisualizerTile extends QSTile<QSTile.State>
         mCallbacks.clear();
 
         mKeyguardMonitor.removeCallback(this);
-        mContext.unregisterReceiver(mReceiver);
     }
+
 
     private void checkIfPlaying() {
         boolean anythingPlaying = false;
-        if (!mPowerSaveModeEnabled) {
-            for (Map.Entry<MediaSession.Token, CallbackInfo> entry : mCallbacks.entrySet()) {
-                if (entry.getValue().isPlaying()) {
-                    anythingPlaying = true;
-                    break;
-                }
+        for (Map.Entry<MediaSession.Token, CallbackInfo> entry : mCallbacks.entrySet()) {
+            if (entry.getValue().isPlaying()) {
+                anythingPlaying = true;
+                break;
             }
         }
         if (anythingPlaying != mIsAnythingPlaying) {
