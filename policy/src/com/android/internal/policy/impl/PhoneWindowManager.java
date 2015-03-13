@@ -1909,6 +1909,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mImmersiveModeBehavior = 0;
             }
 
+            if (mGlobalImmersiveModeStyle != mImmersiveModeBehavior) {
+                mGlobalImmersiveModeStyle = mImmersiveModeBehavior;
+            }
+
             mNavigationBarLeftInLandscape = Settings.System.getIntForUser(resolver,
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0, UserHandle.USER_CURRENT) == 1;
 
@@ -2024,6 +2028,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } else {
             mImmersiveModeBehavior = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.GLOBAL_IMMERSIVE_MODE_STYLE, 2, UserHandle.USER_CURRENT);
+        }
+
+        if (mGlobalImmersiveModeStyle != mImmersiveModeBehavior) {
+            mGlobalImmersiveModeStyle = mImmersiveModeBehavior;
         }
 
         if (mImmersiveModeConfirmation != null) {
@@ -7076,7 +7084,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private boolean isImmersiveMode(int vis) {
         final int flags = View.SYSTEM_UI_FLAG_IMMERSIVE | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        updateImmersiveModeVisibility(vis);
+  //      updateImmersiveModeVisibility(vis);
         return ((vis & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0 || (vis & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0)
                 && (vis & flags) != 0;
     }
