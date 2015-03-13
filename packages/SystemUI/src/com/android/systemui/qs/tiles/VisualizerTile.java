@@ -136,10 +136,8 @@ public class VisualizerTile extends QSTile<QSTile.State>
 
     @Override
     protected void handleClick() {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setClassName("org.cyanogenmod.audiofx",
-            "org.cyanogenmod.audiofx.ActivityMusic");
-        mHost.startSettingsActivity(intent);
+        mHost.startSettingsActivity(new Intent(
+                AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL));
     }
 
     @Override
@@ -179,48 +177,6 @@ public class VisualizerTile extends QSTile<QSTile.State>
             entry.getValue().unregister();
         }
         mCallbacks.clear();
-
-        mKeyguardMonitor.removeCallback(this);
-    }
-
-
-    private void checkIfPlaying() {
-        boolean anythingPlaying = false;
-        for (Map.Entry<MediaSession.Token, CallbackInfo> entry : mCallbacks.entrySet()) {
-            if (entry.getValue().isPlaying()) {
-                anythingPlaying = true;
-                break;
-            }
-        }
-        if (anythingPlaying != mIsAnythingPlaying) {
-            mIsAnythingPlaying = anythingPlaying;
-            if (mIsAnythingPlaying && !mLinked) {
-                AsyncTask.execute(mLinkVisualizer);
-            } else if (!mIsAnythingPlaying && mLinked) {
-                AsyncTask.execute(mUnlinkVisualizer);
-            }
-
-            mHandler.removeCallbacks(mRefreshStateRunnable);
-            mHandler.postDelayed(mRefreshStateRunnable, 50);
-        }
-    }
-
-    @Override
-    public void onKeyguardChanged() {
-        if (mKeyguardMonitor.isShowing()) {
-            if (mLinked) {
-                // explicitly unlink
-                AsyncTask.execute(mUnlinkVisualizer);
-            }
-        } else {
-            // no keyguard, relink if there's something playing
-            if (mIsAnythingPlaying && !mLinked) {
-                AsyncTask.execute(mLinkVisualizer);
-            } else if (!mIsAnythingPlaying && mLinked) {
-                AsyncTask.execute(mUnlinkVisualizer);
-            }
-        }
-        refreshState();
     }
 
     private final Runnable mRefreshStateRunnable = new Runnable() {
