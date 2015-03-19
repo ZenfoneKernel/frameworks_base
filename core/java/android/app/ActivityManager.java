@@ -500,12 +500,20 @@ public class ActivityManager {
      */
     static public boolean isHighEndGfx() {
         if (!_highEndGfxInit) {
-            _isHighEndGfx = !isLowRamDeviceStatic() &&
-                            !Resources.getSystem().getBoolean(com.android.internal.R.bool.config_avoidGfxAccel) ||
-                            isForcedHighEndGfx();
+            _isHighEndGfx = !isLowRamDeviceStatic()
+                            && !overrideHighEndGfx()
+                            && !Resources.getSystem().getBoolean(com.android.internal.R.bool.config_avoidGfxAccel)
+                            || isForcedHighEndGfx();
             _highEndGfxInit = true;
         }
         return _isHighEndGfx;
+    }
+
+    /**
+     * @hide
+     */
+    public static boolean overrideHighEndGfx() {
+        return SystemProperties.getBoolean("persist.sys.override_highendgfx", false);
     }
 
     /**
