@@ -46,20 +46,24 @@ public class NetworkTraffic extends TextView {
         decimalFormat.setMaximumFractionDigits(1);
     }
 
-    private int mState = 0;
+    int mState = 0;
+    int txtSizeSingle;
+    int txtSizeMulti;
+    long lastUpdateTime;
+    long totalRxBytes;
+    int KB = KILOBIT;
+    int MB = KB * KB;
+    int GB = MB * KB;
+    boolean mAutoHide;
+    int mAutoHideThreshold;
+
     private boolean mAttached;
-    private long totalRxBytes;
-    private long totalTxBytes;
-    private long lastUpdateTime;
-    private int txtSizeSingle;
-    private int txtSizeMulti;
-    private int KB = KILOBIT;
-    private int MB = KB * KB;
-    private int GB = MB * KB;
-    private boolean mAutoHide;
-    private int mAutoHideThreshold;
+
+    private static ConnectivityManager mConnManager;
 
     private Handler mTrafficHandler = new Handler() {
+        private long totalTxBytes;
+
         @Override
         public void handleMessage(Message msg) {
             long timeDelta = SystemClock.elapsedRealtime() - lastUpdateTime;
@@ -159,7 +163,7 @@ public class NetworkTraffic extends TextView {
         }
     };
 
-    private Runnable mRunnable = new Runnable() {
+    Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
             mTrafficHandler.sendEmptyMessage(0);
@@ -189,6 +193,17 @@ public class NetworkTraffic extends TextView {
          */
         @Override
         public void onChange(boolean selfChange) {
+            ContentResolver resolver = mContext.getContentResolver();
+
+            mAutoHide = Settings.System.getIntForUser(resolver,
+                    Settings.System.NETWORK_TRAFFIC_AUTOHIDE, 0,
+                    UserHandle.USER_CURRENT) == 1;
+
+            mAutoHideThreshold = Settings.System.getIntForUser(resolver,
+                    Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD, 10,
+                    UserHandle.USER_CURRENT);
+
+            mState = Settings.System.getInt(resolver, Settings.System.NETWORK_TRAFFIC_STATE, 0);
             updateSettings();
         }
     }
@@ -212,23 +227,26 @@ public class NetworkTraffic extends TextView {
      */
     public NetworkTraffic(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
         final Resources resources = getResources();
         txtSizeSingle = resources.getDimensionPixelSize(R.dimen.net_traffic_single_text_size);
         txtSizeMulti = resources.getDimensionPixelSize(R.dimen.net_traffic_multi_text_size);
-        Handler mHandler = new Handler();
-        SettingsObserver settingsObserver = new SettingsObserver(mHandler);
+
+        if (mConnManager == null) mConnManager = getConnectionManager();
+
+        SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
-        updateSettings();
+        settingsObserver.onChange(true);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (!mAttached) {
-            mAttached = true;
             IntentFilter filter = new IntentFilter();
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             mContext.registerReceiver(mIntentReceiver, filter, null, getHandler());
+            mAttached = true;
         }
         updateSettings();
     }
@@ -252,25 +270,18 @@ public class NetworkTraffic extends TextView {
         }
     };
 
-    private boolean getConnectAvailable() {
-        ConnectivityManager connManager =
+    private ConnectivityManager getConnectionManager() {
+        if (mConnManager == null) mConnManager =
                 (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo network = (connManager != null) ? connManager.getActiveNetworkInfo() : null;
+        return mConnManager;
+    }
+
+    protected boolean getConnectAvailable() {
+        NetworkInfo network = (mConnManager != null) ? mConnManager.getActiveNetworkInfo() : null;
         return network != null && network.isConnected();
     }
 
-    private void updateSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-
-        mAutoHide = Settings.System.getIntForUser(resolver,
-                Settings.System.NETWORK_TRAFFIC_AUTOHIDE, 0,
-                UserHandle.USER_CURRENT) == 1;
-
-        mAutoHideThreshold = Settings.System.getIntForUser(resolver,
-                Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD, 10,
-                UserHandle.USER_CURRENT);
-
-        mState = Settings.System.getInt(resolver, Settings.System.NETWORK_TRAFFIC_STATE, 0);
+    protected void updateSettings() {
         if (isSet(mState, MASK_UNIT)) {
             KB = KILOBYTE;
         } else {
@@ -287,7 +298,19 @@ public class NetworkTraffic extends TextView {
                     mTrafficHandler.sendEmptyMessage(1);
                 }
                 setVisibility(View.VISIBLE);
-                updateTrafficDrawable();
+
+                int intTrafficDrawable;
+                if (isSet(mState, MASK_UP + MASK_DOWN)) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_updown;
+                } else if (isSet(mState, MASK_UP)) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_up;
+                } else if (isSet(mState, MASK_DOWN)) {
+                    intTrafficDrawable = R.drawable.stat_sys_network_traffic_down;
+                } else {
+                    intTrafficDrawable = 0;
+                }
+
+                setCompoundDrawablesWithIntrinsicBounds(0, 0, intTrafficDrawable, 0);
                 return;
             }
         } else {
@@ -296,32 +319,18 @@ public class NetworkTraffic extends TextView {
         setVisibility(View.GONE);
     }
 
-    private static boolean isSet(int intState, int intMask) {
+    static boolean isSet(int intState, int intMask) {
         return (intState & intMask) == intMask;
     }
 
-    private static int getInterval(int intState) {
+    static int getInterval(int intState) {
         int intInterval = intState >>> 16;
         return (intInterval >= 250 && intInterval <= 32750) ? intInterval : 1000;
     }
 
-    private void clearHandlerCallbacks() {
+    protected void clearHandlerCallbacks() {
         mTrafficHandler.removeCallbacks(mRunnable);
         mTrafficHandler.removeMessages(0);
         mTrafficHandler.removeMessages(1);
-    }
-
-    private void updateTrafficDrawable() {
-        int intTrafficDrawable;
-        if (isSet(mState, MASK_UP + MASK_DOWN)) {
-            intTrafficDrawable = R.drawable.stat_sys_network_traffic_updown;
-        } else if (isSet(mState, MASK_UP)) {
-            intTrafficDrawable = R.drawable.stat_sys_network_traffic_up;
-        } else if (isSet(mState, MASK_DOWN)) {
-            intTrafficDrawable = R.drawable.stat_sys_network_traffic_down;
-        } else {
-            intTrafficDrawable = 0;
-        }
-        setCompoundDrawablesWithIntrinsicBounds(0, 0, intTrafficDrawable, 0);
     }
 }
