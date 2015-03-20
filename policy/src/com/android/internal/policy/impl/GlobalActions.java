@@ -743,18 +743,20 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             List<UserInfo> users = um.getUsers();
             if (users.size() > 1) {
                 UserInfo currentUser = getCurrentUser();
+                final int avatarSize = mContext.getResources().getDimensionPixelSize(
+                        com.android.internal.R.dimen.global_actions_avatar_size);
                 for (final UserInfo user : users) {
                     if (user.supportsSwitchTo()) {
                         boolean isCurrentUser = currentUser == null
                                 ? user.id == 0 : (currentUser.id == user.id);
                         Drawable avatar = null;
-						Bitmap rawAvatar = um.getUserIcon(user.id);
-						if (rawAvatar == null) {
-							rawAvatar = UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(
-									user.isGuest() ? UserHandle.USER_NULL : user.id, /*light=*/ false));
-						}
-						avatar = new BitmapDrawable(mContext.getResources(),
-								createCircularClip(rawAvatar, avatarSize, avatarSize));
+                        Bitmap rawAvatar = um.getUserIcon(user.id);
+                        if (rawAvatar == null) {
+                            rawAvatar = UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(
+                                    user.isGuest() ? UserHandle.USER_NULL : user.id, /*light=*/ false));
+                        }
+                        avatar = new BitmapDrawable(mContext.getResources(),
+                                createCircularClip(rawAvatar, avatarSize, avatarSize));
 
                         SinglePressAction switchToUser = new SinglePressAction(
                             com.android.internal.R.drawable.ic_lock_user, avatar,
@@ -776,9 +778,9 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                             }
                         };
                         if (isCurrentUser) {
-							switchToUser.setStatus(mContext.getString(
-									R.string.global_action_current_user));
-						}
+                            switchToUser.setStatus(mContext.getString(
+                                    R.string.global_action_current_user));
+                        }
                         items.add(switchToUser);
                     }
                 }
