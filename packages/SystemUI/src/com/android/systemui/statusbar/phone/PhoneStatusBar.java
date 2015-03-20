@@ -1590,7 +1590,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void prepareNavigationBarView(boolean forceReset) {
         mNavigationBarView.reorient();
 
-<<<<<<< HEAD
         if (mNavigationBarView.getRecentsButton() != null) {
             mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
             mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPreloadOnTouchListener);
@@ -1603,7 +1602,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNavigationBarView.getBackButton().setOnLongClickListener(mLongPressBackRecentsListener);
         }
         setHomeActionListener();
-=======
+
         if (forceReset) {
             // Nav Bar was added dynamically - we need to reset the mSystemUiVisibility and call
             // setSystemUiVisibility so that mNavigationBarMode is set to the correct value
@@ -1612,7 +1611,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             setSystemUiVisibility(newVal, SYSTEM_UI_VISIBILITY_MASK);
         }
 
->>>>>>> 083163a... SystemUI: Fix nav bar transparency when enabling software keys
         updateSearchPanel();
     }
 
@@ -3950,10 +3948,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mContext.getSystemService(Context.WALLPAPER_SERVICE);
         wm.forgetLoadedKeyguardWallpaper();
         updateMediaMetaData(true);
-
-        if (mNavigationBarView != null) {
-            mNavigationBarView.updateSettings();
-        }
     }
 
     private void setControllerUsers() {
