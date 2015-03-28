@@ -5277,19 +5277,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final int keyCode = event.getKeyCode();
         final int scanCode = event.getScanCode();
 
-        if (SystemProperties.getInt("sys.quickboot.enable", 0) == 1) {
-
-            if (keyCode == KeyEvent.KEYCODE_POWER && !interactive) {
-                if (down) {
-                    acquireQuickBootWakeLock();
-                    mHandler.postDelayed(mQuickBootPowerLongPress, mLongPressPoweronTime);
-                } else {
-                    releaseQuickBootWakeLock();
-                    mHandler.removeCallbacks(mQuickBootPowerLongPress);
+        if (keyCode == KeyEvent.KEYCODE_POWER) {
+            if (SystemProperties.getInt("sys.quickboot.enable", 0) == 1) {
+                if (!interactive) {
+                    if (down) {
+                        acquireQuickBootWakeLock();
+                        mHandler.postDelayed(mQuickBootPowerLongPress, mLongPressPoweronTime);
+                    } else {
+                        releaseQuickBootWakeLock();
+                        mHandler.removeCallbacks(mQuickBootPowerLongPress);
+                    }
                 }
+                // ignore this event
+                return 0;
             }
-            // ignore this event
-            return 0;
         }
 
         final boolean isInjected = (policyFlags & WindowManagerPolicy.FLAG_INJECTED) != 0;
