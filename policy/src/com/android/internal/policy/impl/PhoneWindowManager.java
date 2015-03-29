@@ -3070,7 +3070,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             if (down) {
-                if (mPressOnMenuBehavior == KEY_ACTION_APP_SWITCH
+                if (repeatCount == 0 && mPressOnMenuBehavior == KEY_ACTION_APP_SWITCH
                         || mLongPressOnMenuBehavior == KEY_ACTION_APP_SWITCH) {
                     preloadRecentApps();
                 }
@@ -3139,7 +3139,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return 0;
         } else if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
             if (down) {
-                if (mPressOnAppSwitchBehavior == KEY_ACTION_APP_SWITCH
+                if (repeatCount == 0 && mPressOnAppSwitchBehavior == KEY_ACTION_APP_SWITCH
                         || mLongPressOnAppSwitchBehavior == KEY_ACTION_APP_SWITCH) {
                     preloadRecentApps();
                 }
@@ -3170,7 +3170,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_ASSIST) {
             if (down) {
-                if (mPressOnAssistBehavior == KEY_ACTION_APP_SWITCH
+                if (repeatCount == 0 && mPressOnAssistBehavior == KEY_ACTION_APP_SWITCH
                         || mLongPressOnAssistBehavior == KEY_ACTION_APP_SWITCH) {
                     preloadRecentApps();
                 }
@@ -3261,7 +3261,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (down) {
-                if (!mPreloadedRecentApps && (mPressOnBackBehavior == KEY_ACTION_APP_SWITCH
+                if (repeatCount == 0 && !mPreloadedRecentApps && (mPressOnBackBehavior == KEY_ACTION_APP_SWITCH
                         || mLongPressOnBackBehavior == KEY_ACTION_APP_SWITCH)) {
                     preloadRecentApps();
                 }
