@@ -34,4 +34,21 @@ public class HardwareButtonConstants {
     public static final int KEY_ACTION_NAVBAR = 12;
     public static final int KEY_ACTION_HOME = 13;
     public static final int KEY_ACTION_BACK = 14;
+
+    // Masks for checking presence of hardware keys.
+    // Must match values in core/res/res/values/config.xml
+    public static final int KEY_MASK_HOME = 0x01;
+    public static final int KEY_MASK_BACK = 0x02;
+    public static final int KEY_MASK_MENU = 0x04;
+    public static final int KEY_MASK_ASSIST = 0x08;
+    public static final int KEY_MASK_APP_SWITCH = 0x10;
+    public static final int KEY_MASK_CAMERA = 0x20;
+    public static final int KEY_MASK_VOLUME = 0x40;
+
+    // Defaults - single press...long press...double tap
+    public static final int[] APPSWITCH_DEFAULTS = new int[] { KEY_ACTION_APP_SWITCH, KEY_ACTION_NOTHING, KEY_ACTION_NOTHING};
+    public static final int[] ASSIST_DEFAULTS = new int[] { KEY_ACTION_SEARCH,  KEY_ACTION_NOTHING,    KEY_ACTION_NOTHING };
+    public static final int[] HOME_DEFAULTS = new int[]   { KEY_ACTION_HOME,    KEY_ACTION_SEARCH,    KEY_ACTION_NOTHING };
+    public static final int[] MENU_DEFAULTS = new int[]   { KEY_ACTION_MENU,    KEY_ACTION_APP_SWITCH, KEY_ACTION_NOTHING };
+    public static final int[] BACK_DEFAULTS = new int[]   { KEY_ACTION_BACK,    KEY_ACTION_LAST_APP,   KEY_ACTION_NOTHING };
 }
