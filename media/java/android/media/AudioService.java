@@ -4760,10 +4760,13 @@ public class AudioService extends IAudioService.Stub {
         boolean launchPlayer = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.HEADSET_CONNECT_PLAYER, 0, UserHandle.USER_CURRENT) != 0;
         if (launchPlayer) {
-            Intent playerIntent = new Intent(Intent.ACTION_MAIN);
-            playerIntent.addCategory(Intent.CATEGORY_APP_MUSIC);
-            playerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(playerIntent);
+            try {
+                Intent playerIntent = new Intent(Intent.ACTION_MAIN);
+                playerIntent.addCategory(Intent.CATEGORY_APP_MUSIC);
+                playerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(playerIntent);
+            } catch (Exception e) {
+            }
         }
     }
 
