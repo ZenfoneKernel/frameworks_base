@@ -851,9 +851,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE), false, this,
                     UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.ENABLE_QUICKBOOT), false, this,
-                    UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -1928,9 +1925,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             if (mGlobalImmersiveModeStyle != mImmersiveModeBehavior) {
                 mGlobalImmersiveModeStyle = mImmersiveModeBehavior;
             }
-
-            mQuickBootEnabled = Settings.System.getIntForUser(resolver,
-                    Settings.System.ENABLE_QUICKBOOT, 0, UserHandle.USER_CURRENT) == 1;
 
             mNavigationBarLeftInLandscape = Settings.System.getIntForUser(resolver,
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0, UserHandle.USER_CURRENT) == 1;
