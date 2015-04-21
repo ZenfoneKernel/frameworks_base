@@ -48,7 +48,7 @@
     <string name="accessibility_dpad_right">Cursor right</string>
 
     <!-- Quick Settings -->
-    <string name="quick_settings_powermenu_label">Power Menu</string>
+    <string name="quick_settings_powermenu_label">Power menu</string>
 
     <!-- QuickSettings: Mobile data [CHAR LIMIT=NONE] -->
     <string name="quick_settings_mobile_data_label">Mobile data</string>
