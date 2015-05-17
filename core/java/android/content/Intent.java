@@ -2858,6 +2858,10 @@ public class Intent implements Parcelable, Cloneable {
     /** {@hide} */
     public static final String ACTION_MASTER_CLEAR = "android.intent.action.MASTER_CLEAR";
 
+    /** {@hide} */
+    public static final String ACTION_DOZE_PULSE_STARTING =
+            "android.intent.action.DOZE_PULSE_STARTING";
+
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Standard intent categories (see addCategory()).
@@ -3423,6 +3427,12 @@ public class Intent implements Parcelable, Cloneable {
      */
     public static final String METADATA_DOCK_HOME = "android.dock_home";
 
+    /**
+     * Exodus updater: intent to trigger an update check
+     * @hide
+     */
+    public static final String ACTION_CHECK_FOR_UPDATES = "android.intent.CHECK_FOR_UPDATES";
+    
     /**
      * Used as a parcelable extra field in {@link #ACTION_APP_ERROR}, containing
      * the bug report.

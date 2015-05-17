@@ -105,6 +105,7 @@ public class VolumePanel extends Handler implements DemoMode {
     private static final int TIMEOUT_DELAY_COLLAPSED = 4500;
     private static final int TIMEOUT_DELAY_SAFETY_WARNING = 5000;
     private static final int TIMEOUT_DELAY_EXPANDED = 10000;
+    private static final int ANIMATION_DURATION = 350; // ms
 
     private static final int MSG_VOLUME_CHANGED = 0;
     private static final int MSG_FREE_RESOURCES = 1;
@@ -732,8 +733,23 @@ public class VolumePanel extends Handler implements DemoMode {
             sc.expandPanel.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    expandVolumePanel();
-                    resetTimeout();
+                    Runnable r = new Runnable() {
+                    public void run() {
+                        mView.setY(-mView.getHeight());
+                        mView.animate().y(0).setDuration(ANIMATION_DURATION)
+                            .withStartAction(new Runnable() {
+                                public void run() {
+                                    expandVolumePanel();
+                                    resetTimeout();
+                                }
+                            });
+                        }
+                    };
+                    if (mView.getHeight() == 0) {
+                        new Handler().post(r);
+                    } else {
+                        r.run();
+                    }
                 }
             });
             sc.seekbarView.setMax(getStreamMaxVolume(streamType));
