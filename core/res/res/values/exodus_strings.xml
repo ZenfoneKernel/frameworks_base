@@ -68,10 +68,6 @@
     <!-- label for screen record item in phone options dialog -->
     <string name="global_action_screen_record">Screen record</string>
 
-    <!-- Zen mode buttons -->
-    <string name="silent_mode_priority">Priority</string>
-    <string name="silent_mode_none">None</string>
-
     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permlab_recordScreen">Record content being displayed</string>
     <string name="record">Record</string>
