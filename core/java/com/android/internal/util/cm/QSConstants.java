@@ -54,6 +54,7 @@ public class QSConstants {
     public static final String TILE_UPDATER = "updater";
     public static final String TILE_POWER_MENU = "togglePowerMenu"; //#PowerMenuTile
     public static final String TILE_WIFI_NETWORK_NOTIFICATIONS = "wifi_network_notifications";
+    public static final String TILE_BATTERY_SAVER = "battery_saver";
 
     public static final String DYNAMIC_TILE_NEXT_ALARM = "next_alarm";
     public static final String DYNAMIC_TILE_IME_SELECTOR = "ime_selector";
@@ -98,6 +99,7 @@ public class QSConstants {
         STATIC_TILES_AVAILABLE.add(TILE_SYNC);
         STATIC_TILES_AVAILABLE.add(TILE_POWER_MENU); //#PowerMenuTile
         STATIC_TILES_AVAILABLE.add(TILE_WIFI_NETWORK_NOTIFICATIONS);
+        STATIC_TILES_AVAILABLE.add(TILE_BATTERY_SAVER);
 
         DYNAMIC_TILES_AVAILABLE.add(DYNAMIC_TILE_NEXT_ALARM);
         DYNAMIC_TILES_AVAILABLE.add(DYNAMIC_TILE_IME_SELECTOR);
