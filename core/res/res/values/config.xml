@@ -2374,4 +2374,8 @@
     <!-- If this is true, key chords can be used to take a screen record on the device. -->
     <bool name="config_enableScreenrecordChord">true</bool>
 
+    <!-- Config to enable installation of region locked packages -->
+    <string-array name="config_region_locked_packages" translatable="false">
+    </string-array>
+
 </resources>
