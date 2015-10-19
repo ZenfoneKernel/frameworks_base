@@ -39,6 +39,8 @@
     <string-array name="config_forceEnabledComponents" translatable="false">
     </string-array>
 
+    <!-- Enable Advanced Reboot -->
+    <bool name="config_advanced_reboot">true</bool>
 
 </resources>
 
