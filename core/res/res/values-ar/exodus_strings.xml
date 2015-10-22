@@ -20,13 +20,13 @@
 for different hardware and product builds. Do not translate. -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="global_action_reboot">Reboot</string>
-  <string name="reboot_reboot">Neu starten</string>
+  <string name="reboot_reboot">Reboot</string>
   <string name="reboot_recovery">Recovery</string>
   <string name="reboot_bootloader">Bootloader</string>
   <string name="reboot_download">Download</string>
-  <string name="reboot_soft">Schneller Neustart</string>
+  <string name="reboot_soft">Soft reboot</string>
   <string name="reboot_title">Reboot</string>
   <string name="reboot_confirm" product="tablet">Your tablet will reboot.</string>
   <string name="reboot_confirm" product="default">Your phone will reboot.</string>
-  <string name="reboot_progress">Starte neu\u2026</string>
+  <string name="reboot_progress">Rebooting\u2026</string>
 </resources>
