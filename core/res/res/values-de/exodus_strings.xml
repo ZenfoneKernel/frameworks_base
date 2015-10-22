@@ -27,6 +27,6 @@ for different hardware and product builds. Do not translate. -->
   <string name="reboot_soft">Schneller Neustart</string>
   <string name="reboot_title">Reboot</string>
   <string name="reboot_confirm" product="tablet">Your tablet will reboot.</string>
-  <string name="reboot_confirm" product="default">Your phone will reboot.</string>
+  <string name="reboot_confirm" product="default">Ihr Telefon wird neu gestartet.</string>
   <string name="reboot_progress">Starte neu\u2026</string>
 </resources>
