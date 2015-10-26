@@ -19,29 +19,29 @@
 <!-- These resources are around just to allow their values to be customized
 for different hardware and product builds. Do not translate. -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="global_action_reboot">Reboot</string>
-  <string name="reboot_reboot">Reboot</string>
-  <string name="reboot_recovery">Recovery</string>
-  <string name="reboot_bootloader">Bootloader</string>
-  <string name="reboot_download">Download</string>
-  <string name="reboot_soft">Soft reboot</string>
-  <string name="reboot_title">Reboot</string>
-  <string name="reboot_confirm" product="tablet">Your tablet will reboot.</string>
-  <string name="reboot_confirm" product="default">Your phone will reboot.</string>
-  <string name="reboot_progress">Rebooting\u2026</string>
-  <string name="global_action_screenshot">Screenshot</string>
-  <string name="global_action_search">Search</string>
-  <string name="global_action_voicesearch">Voice Search</string>
-  <string name="restarting_ui">Restarting UI\u2026</string>
-  <string name="confirmation_msg">System UI needs to restart in order to apply this change!</string>
-  <string name="exodus_start_title">Exodus is starting\u2026</string>
-  <string name="exodus_is_upgrading">Exodus is upgrading\u2026</string>
-  <string name="action_null">Blank</string>
-  <string name="action_home">Default: Home</string>
-  <string name="action_back">Default: Back</string>
-  <string name="action_recents">Default: Recents</string>
-  <string name="action_search">Search: In-app search</string>
-  <string name="action_screenshot">Screenshot</string>
+  <string name="global_action_reboot">再起動</string>
+  <string name="reboot_reboot">再起動</string>
+  <string name="reboot_recovery">リカバリ</string>
+  <string name="reboot_bootloader">ブートローダー</string>
+  <string name="reboot_download">ダウンロード</string>
+  <string name="reboot_soft">ソフトリブート</string>
+  <string name="reboot_title">再起動</string>
+  <string name="reboot_confirm" product="tablet">タブレットは再起動されます。</string>
+  <string name="reboot_confirm" product="default">端末が再起動されます</string>
+  <string name="reboot_progress">再起動中</string>
+  <string name="global_action_screenshot">スクリーン ショット</string>
+  <string name="global_action_search">検索</string>
+  <string name="global_action_voicesearch">音声検索</string>
+  <string name="restarting_ui">UIを再起動中</string>
+  <string name="confirmation_msg">UIシステムは、この変更を適用するために再起動する必要があります!</string>
+  <string name="exodus_start_title">Exodusが起動されます</string>
+  <string name="exodus_is_upgrading">Exodusは更新中です</string>
+  <string name="action_null">空白</string>
+  <string name="action_home">既定: ホーム</string>
+  <string name="action_back">既定: 戻る</string>
+  <string name="action_recents">既定: 只今</string>
+  <string name="action_search">アプリ内の検索</string>
+  <string name="action_screenshot">スクリーン ショット</string>
   <string name="action_sleep">Sleep</string>
   <string name="action_menu">Menu</string>
   <string name="action_ime">Open IME switcher</string>

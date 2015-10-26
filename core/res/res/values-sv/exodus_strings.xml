@@ -19,8 +19,8 @@
 <!-- These resources are around just to allow their values to be customized
 for different hardware and product builds. Do not translate. -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="global_action_reboot">Reboot</string>
-  <string name="reboot_reboot">Reboot</string>
+  <string name="global_action_reboot">Starta om</string>
+  <string name="reboot_reboot">Starta om</string>
   <string name="reboot_recovery">Recovery</string>
   <string name="reboot_bootloader">Bootloader</string>
   <string name="reboot_download">Download</string>
